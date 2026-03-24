@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>陽明交通大學圖書館 今日開館狀態</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f0ede8;
+    --card: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6560;
+    --accent: #2b5da6;
+    --accent-light: #e8eef8;
+    --open: #1a6b45;
+    --open-bg: #e6f4ec;
+    --closed: #9b2020;
+    --closed-bg: #faeaea;
+    --unknown: #7a5c00;
+    --unknown-bg: #fdf6e3;
+    --divider: #e0dbd4;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(43,93,166,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 80% 90%, rgba(26,107,69,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 560px;
+    width: 100%;
+    overflow: hidden;
+    animation: rise 0.6s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--ink);
+    color: #fff;
+    padding: 28px 32px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::after {
+    content: '圖';
+    position: absolute;
+    right: -12px; bottom: -24px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 120px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.04);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    padding: 2px 6px;
+  }
+
+  .date-line {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.04em;
+  }
+
+  .header h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: clamp(26px, 5vw, 34px);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-top: 6px;
+  }
+
+  .header h1 small {
+    color: rgba(255,255,255,0.45);
+    font-size: 0.48em;
+    font-weight: 400;
+    display: block;
+    font-family: 'Noto Sans TC', sans-serif;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  /* ── Campus rows ── */
+  .campuses { padding: 4px 0; }
+
+  .campus-row {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--divider);
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: background 0.15s;
+  }
+  .campus-row:last-child { border-bottom: none; }
+  .campus-row:hover { background: #fafaf9; }
+
+  .campus-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .campus-body { flex: 1; min-width: 0; }
+
+  .campus-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  /* Status pill */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 99px;
+    padding: 2px 9px 2px 7px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 7px;
+  }
+  .pill::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .pill.open    { background: var(--open-bg);    color: var(--open); }
+  .pill.closed  { background: var(--closed-bg);  color: var(--closed); }
+  .pill.unknown { background: var(--unknown-bg); color: var(--unknown); }
+
+  /* Hours */
+  .hours {
+    font-family: 'DM Mono', monospace;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-bottom: 3px;
+    letter-spacing: -0.01em;
+  }
+  .hours.closed-text {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--closed);
+  }
+  .hours.unknown-text {
+    font-size: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--muted);
+  }
+
+  .note {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-top: 3px;
+  }
+
+  /* Skeleton loader */
+  .skel {
+    height: 20px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.3s infinite;
+    margin-bottom: 7px;
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to   { background-position: -200% 0; }
+  }
+
+  /* ── Footer ── */
+  .footer {
+    background: var(--bg);
+    padding: 14px 32px 18px;
+    border-top: 1px solid var(--divider);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 13px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid rgba(43,93,166,0.15);
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .link-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .link-btn svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+  .update-row {
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    animation: blink 2.5s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+
+  /* stale data warning */
+  .stale-warn {
+    font-size: 11px;
+    color: #92400e;
+    background: #fff8e1;
+    border-left: 3px solid #f59e0b;
+    padding: 7px 12px;
+    border-radius: 0 6px 6px 0;
+    display: none;
+  }
+
+  @media (max-width: 400px) {
+    .header, .campus-row, .footer { padding-left: 20px; padding-right: 20px; }
+    .hours { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="header">
+    <div class="header-meta">
+      <span class="badge">NYCU Library</span>
+      <span class="date-line" id="date-display">—</span>
+    </div>
+    <h1>
+      <small>Today's Status</small>
+      今日開館狀態
+    </h1>
+  </div>
+
+  <div class="campuses">
+    <div class="campus-row">
+      <div class="campus-icon" style="background:#e8eef8">🏛️</div>
+      <div class="campus-body">
+        <div class="campus-name">交大校區 · Chiao Tung Campus</div>
+        <div id="jd-status">
+          <div class="skel" style="width:45%"></div>
+          <div class="skel" style="width:65%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="campus-row">
+      <div class="campus-icon" style="background:#e6f4ec">🏥</div>
+      <div class="campus-body">
+        <div class="campus-name">陽明校區 · Yang Ming Campus</div>
+        <div id="ym-status">
+          <div class="skel" style="width:45%"></div>
+          <div class="skel" style="width:65%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stale-warn" id="stale-warn">
+    ⚠️ 顯示的可能不是今日資料，請點下方行事曆連結確認。
+  </div>
+
+  <div class="footer">
+    <div class="links">
+      <a class="link-btn" href="https://www.lib.nycu.edu.tw/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 13V5l6-3 6 3v8"/><rect x="6" y="9" width="4" height="4"/>
+        </svg>
+        圖書館官網
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 3H3v10h10V9M9 3h4v4M9 7l4-4"/>
+        </svg>
+      </a>
+      <a class="link-btn" id="link-jd" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 2v2M11 2v2M2 7h12"/>
+        </svg>
+        交大開館行事曆
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 3H3v10h10V9M9 3h4v4M9 7l4-4"/>
+        </svg>
+      </a>
+      <a class="link-btn" id="link-ym" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 2v2M11 2v2M2 7h12"/>
+        </svg>
+        陽明開館行事曆
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 3H3v10h10V9M9 3h4v4M9 7l4-4"/>
+        </svg>
+      </a>
+    </div>
+    <div class="update-row">
+      <span class="dot"></span>
+      <span>每日 00:01・06:01・12:01・18:01 自動更新　最後更新：<span id="updated-at">—</span></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const TZ = 'Asia/Taipei';
+const WEEKDAY = ['日','一','二','三','四','五','六'];
+
+function todayTaipei() {
+  const d = new Date(new Date().toLocaleString('en-US', { timeZone: TZ }));
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return { iso: `${y}-${m}-${day}`, display: `${y}/${m}/${day} (${WEEKDAY[d.getDay()]})` };
+}
+
+function renderCampus(id, campus) {
+  const el = document.getElementById(id);
+
+  let pillCls, pillLabel, hoursHtml;
+
+  if (campus.fetch_error || (!campus.closed && !campus.hours && !campus.note)) {
+    pillCls   = 'unknown'; pillLabel = '資料待確認';
+    hoursHtml = `<div class="hours unknown-text">請查閱官網或行事曆</div>`;
+  } else if (campus.closed) {
+    pillCls   = 'closed'; pillLabel = '閉館 Closed';
+    hoursHtml = `<div class="hours closed-text">今日閉館</div>`;
+  } else if (campus.hours) {
+    pillCls   = 'open'; pillLabel = '開館 Open';
+    hoursHtml = `<div class="hours">${campus.hours}</div>`;
+  } else {
+    pillCls   = 'unknown'; pillLabel = '資訊待確認';
+    hoursHtml = `<div class="hours unknown-text">請查閱官網或行事曆</div>`;
+  }
+
+  const noteHtml = campus.note
+    ? `<div class="note">${campus.note}</div>`
+    : '';
+
+  el.innerHTML = `
+    <span class="pill ${pillCls}">${pillLabel}</span>
+    ${hoursHtml}${noteHtml}`;
+}
+
+async function main() {
+  const today = todayTaipei();
+  document.getElementById('date-display').textContent = today.display;
+
+  let data;
+  try {
+    const res = await fetch(`data.json?_=${Date.now()}`);
+    if (!res.ok) throw new Error('fetch failed');
+    data = await res.json();
+  } catch(e) {
+    console.error('Cannot load data.json:', e);
+    ['jd-status','ym-status'].forEach(id => {
+      document.getElementById(id).innerHTML =
+        `<span class="pill unknown">無法載入資料</span>
+         <div class="hours unknown-text">請直接查閱官網</div>`;
+    });
+    document.getElementById('updated-at').textContent = '載入失敗';
+    return;
+  }
+
+  // 設定行事曆連結
+  if (data.campuses.jd?.calendar_url)
+    document.getElementById('link-jd').href = data.campuses.jd.calendar_url;
+  if (data.campuses.ym?.calendar_url)
+    document.getElementById('link-ym').href = data.campuses.ym.calendar_url;
+
+  // 若 data.json 的日期不是今天，顯示警告
+  if (data.date !== today.iso) {
+    document.getElementById('stale-warn').style.display = 'block';
+  }
+
+  // 格式化更新時間
+  if (data.updated_at) {
+    const dt = new Date(data.updated_at);
+    document.getElementById('updated-at').textContent =
+      dt.toLocaleString('zh-TW', {
+        timeZone: TZ,
+        month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit'
+      });
+  }
+
+  renderCampus('jd-status', data.campuses.jd || {});
+  renderCampus('ym-status', data.campuses.ym || {});
+}
+
+main();
+</script>
+</body>
+</html>

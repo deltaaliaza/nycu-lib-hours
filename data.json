@@ -1,0 +1,22 @@
+{
+  "date": "1970-01-01",
+  "updated_at": "1970-01-01T00:00:00+08:00",
+  "campuses": {
+    "jd": {
+      "name": "交大校區",
+      "closed": false,
+      "hours": null,
+      "note": "資料尚未更新，請稍候或查閱官網",
+      "fetch_error": true,
+      "calendar_url": "https://calendar.google.com/calendar/embed?src=c_e6a5ca6c818f1aaf7cea40e50d6691183805f3b3fd349f29af96ce53d3c6b9ed%40group.calendar.google.com&ctz=Asia%2FTaipei"
+    },
+    "ym": {
+      "name": "陽明校區",
+      "closed": false,
+      "hours": null,
+      "note": "資料尚未更新，請稍候或查閱官網",
+      "fetch_error": true,
+      "calendar_url": "https://calendar.google.com/calendar/embed?src=c_6b25276d5eb0aef28ecfc4775650eb698a6364e565388f9e61c1d1704a7ef4e0%40group.calendar.google.com&ctz=Asia%2FTaipei"
+    }
+  }
+}
