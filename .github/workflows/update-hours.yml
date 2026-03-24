@@ -1,0 +1,40 @@
+name: Update Library Hours
+
+on:
+  schedule:
+    # 台北時間 00:01、06:01、12:01、18:01（UTC = 台北 -8h）
+    - cron: '1 16 * * *'   # 台北 00:01
+    - cron: '1 22 * * *'   # 台北 06:01
+    - cron: '1  4 * * *'   # 台北 12:01
+    - cron: '1 10 * * *'   # 台北 18:01
+  workflow_dispatch:         # 允許手動觸發（方便測試）
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests icalendar python-dateutil pytz
+
+      - name: Fetch calendar & generate data.json
+        run: python fetch_hours.py
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git diff --cached --quiet \
+            || git commit -m "chore: update hours $(TZ=Asia/Taipei date '+%Y-%m-%d %H:%M')"
+          git push
