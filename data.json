@@ -1,11 +1,11 @@
 {
   "date": "2026-04-03",
-  "updated_at": "2026-04-03T13:45:09+08:00",
+  "updated_at": "2026-04-03T18:36:27+08:00",
   "campuses": {
     "jd": {
       "closed": true,
       "hours": null,
-      "note": "兒童節補假休館",
+      "note": "Closed for the Make-up Holiday",
       "fetch_error": false,
       "name": "交大校區",
       "calendar_url": "https://calendar.google.com/calendar/embed?src=c_e6a5ca6c818f1aaf7cea40e50d6691183805f3b3fd349f29af96ce53d3c6b9ed%40group.calendar.google.com&ctz=Asia%2FTaipei"
