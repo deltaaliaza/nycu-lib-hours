@@ -1,6 +1,6 @@
 {
   "date": "2026-04-05",
-  "updated_at": "2026-04-05T13:48:13+08:00",
+  "updated_at": "2026-04-05T18:25:31+08:00",
   "campuses": {
     "jd": {
       "closed": true,
@@ -13,7 +13,7 @@
     "ym": {
       "closed": true,
       "hours": null,
-      "note": "Closed for Children's Day & Tomb Sweeping Day",
+      "note": "兒童節&清明節休館",
       "fetch_error": false,
       "name": "陽明校區",
       "calendar_url": "https://calendar.google.com/calendar/embed?src=c_6b25276d5eb0aef28ecfc4775650eb698a6364e565388f9e61c1d1704a7ef4e0%40group.calendar.google.com&ctz=Asia%2FTaipei"
