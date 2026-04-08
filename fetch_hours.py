@@ -132,20 +132,48 @@ def get_today_events(ical_bytes: bytes, target: date) -> list[dict]:
 
 
 def merge_events(events: list[dict]) -> dict:
-    """閉館 > 有時段的開館 > 僅 note"""
+    """
+    合併當天多筆事件，優先順序：
+      1. 有明確時段的事件（最優先）
+      2. 閉館事件
+      3. 僅有 note 的事件
+
+    當天若同時有說明文字（如「圖週中考試延長開館」）和時間（如「08:00-22:30」），
+    以時間為準，並將所有說明文字合併為 note 一起顯示。
+    避免說明文字中偶爾出現「休館」二字造成誤判。
+    """
     if not events:
         return {"closed": False, "hours": None, "note": "行事曆今日無登錄資料"}
 
-    closed = [e for e in events if e["closed"]]
-    if closed:
-        return {"closed": True, "hours": None, "note": closed[0]["note"]}
-
+    # 1. 優先取有明確時段的事件
     with_hours = [e for e in events if e["hours"]]
     if with_hours:
         e = with_hours[0]
-        return {"closed": False, "hours": e["hours"], "note": e.get("note")}
+        # 收集其他說明性 note 合併顯示
+        extra_notes = [
+            x["note"] for x in events
+            if x.get("note") and not x["hours"] and not x["closed"]
+        ]
+        combined = "\u3001".join(filter(None, [e.get("note")] + extra_notes))
+        return {
+            "closed": False,
+            "hours": e["hours"],
+            "note": combined if combined else None,
+        }
 
-    return {"closed": False, "hours": None, "note": events[0].get("note")}
+    # 2. 閉館事件
+    closed = [e for e in events if e["closed"]]
+    if closed:
+        extra_notes = [
+            x["note"] for x in events
+            if x.get("note") and not x["closed"]
+        ]
+        combined = "\u3001".join(filter(None, [closed[0]["note"]] + extra_notes))
+        return {"closed": True, "hours": None, "note": combined if combined else None}
+
+    # 3. 僅有 note
+    notes = [e["note"] for e in events if e.get("note")]
+    return {"closed": False, "hours": None, "note": "\u3001".join(notes) if notes else None}
 
 
 def main():
