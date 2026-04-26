@@ -1,10 +1,10 @@
 {
-  "date": "2026-04-26",
-  "updated_at": "2026-04-26T18:38:32+08:00",
+  "date": "2026-04-27",
+  "updated_at": "2026-04-27T00:54:22+08:00",
   "campuses": {
     "jd": {
       "closed": false,
-      "hours": "09:00–17:00",
+      "hours": "08:00–22:30",
       "note": null,
       "fetch_error": false,
       "name": "交大校區",
@@ -13,7 +13,7 @@
     "ym": {
       "closed": false,
       "hours": "08:00–22:30",
-      "note": "校慶閉幕暨陽明日活動延長開館、NYCU anniversary closing ceremony and NYMU Festival activities--extended the opening hours",
+      "note": null,
       "fetch_error": false,
       "name": "陽明校區",
       "calendar_url": "https://calendar.google.com/calendar/embed?src=c_6b25276d5eb0aef28ecfc4775650eb698a6364e565388f9e61c1d1704a7ef4e0%40group.calendar.google.com&ctz=Asia%2FTaipei"
