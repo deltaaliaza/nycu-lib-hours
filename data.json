@@ -1,6 +1,6 @@
 {
   "date": "2026-05-01",
-  "updated_at": "2026-05-01T01:27:19+08:00",
+  "updated_at": "2026-05-01T06:58:25+08:00",
   "campuses": {
     "jd": {
       "closed": true,
@@ -13,7 +13,7 @@
     "ym": {
       "closed": true,
       "hours": null,
-      "note": "Closed for Labor Day",
+      "note": "勞動節休館",
       "fetch_error": false,
       "name": "陽明校區",
       "calendar_url": "https://calendar.google.com/calendar/embed?src=c_6b25276d5eb0aef28ecfc4775650eb698a6364e565388f9e61c1d1704a7ef4e0%40group.calendar.google.com&ctz=Asia%2FTaipei"
