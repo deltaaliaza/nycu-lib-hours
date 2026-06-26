@@ -1,10 +1,10 @@
 {
-  "date": "2026-06-26",
-  "updated_at": "2026-06-26T20:06:36+08:00",
+  "date": "2026-06-27",
+  "updated_at": "2026-06-27T01:56:33+08:00",
   "campuses": {
     "jd": {
       "closed": false,
-      "hours": "08:00–12:00",
+      "hours": "09:00–17:00",
       "note": null,
       "fetch_error": false,
       "name": "交大校區",
@@ -12,7 +12,7 @@
     },
     "ym": {
       "closed": false,
-      "hours": "08:00–21:00",
+      "hours": "09:00–17:00",
       "note": "​Summer vacation、​暑假開館時間",
       "fetch_error": false,
       "name": "陽明校區",
