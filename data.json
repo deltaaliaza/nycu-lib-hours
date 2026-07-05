@@ -1,18 +1,18 @@
 {
-  "date": "2026-07-05",
-  "updated_at": "2026-07-05T19:24:22+08:00",
+  "date": "2026-07-06",
+  "updated_at": "2026-07-06T01:19:20+08:00",
   "campuses": {
     "jd": {
-      "closed": true,
-      "hours": null,
-      "note": "Closed for summer vacation",
+      "closed": false,
+      "hours": "08:00–22:30",
+      "note": null,
       "fetch_error": false,
       "name": "交大校區",
       "calendar_url": "https://calendar.google.com/calendar/embed?src=c_e6a5ca6c818f1aaf7cea40e50d6691183805f3b3fd349f29af96ce53d3c6b9ed%40group.calendar.google.com&ctz=Asia%2FTaipei"
     },
     "ym": {
       "closed": false,
-      "hours": "09:00–17:00",
+      "hours": "08:00–21:00",
       "note": "​暑假開館時間、​Summer vacation",
       "fetch_error": false,
       "name": "陽明校區",
