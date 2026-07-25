@@ -1,11 +1,11 @@
 {
-  "date": "2026-07-25",
-  "updated_at": "2026-07-25T19:02:34+08:00",
+  "date": "2026-07-26",
+  "updated_at": "2026-07-26T01:07:16+08:00",
   "campuses": {
     "jd": {
-      "closed": false,
-      "hours": "09:00–17:00",
-      "note": null,
+      "closed": true,
+      "hours": null,
+      "note": "暑假週日休館",
       "fetch_error": false,
       "name": "交大校區",
       "calendar_url": "https://calendar.google.com/calendar/embed?src=c_e6a5ca6c818f1aaf7cea40e50d6691183805f3b3fd349f29af96ce53d3c6b9ed%40group.calendar.google.com&ctz=Asia%2FTaipei"
