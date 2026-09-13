@@ -1,10 +1,10 @@
 {
-  "date": "2026-09-13",
-  "updated_at": "2026-09-13T21:59:27+08:00",
+  "date": "2026-09-14",
+  "updated_at": "2026-09-14T02:41:46+08:00",
   "campuses": {
     "jd": {
       "closed": false,
-      "hours": "09:00–17:00",
+      "hours": "08:00–22:30",
       "note": null,
       "fetch_error": false,
       "name": "交大校區",
@@ -12,7 +12,7 @@
     },
     "ym": {
       "closed": false,
-      "hours": "09:00–17:00",
+      "hours": "08:00–22:30",
       "note": null,
       "fetch_error": false,
       "name": "陽明校區",
