@@ -1,0 +1,10 @@
+{
+  "jd": {
+    "name": "交大校區",
+    "calendar_url": "https://calendar.google.com/calendar/embed?wkst=2&ctz=Asia%2FTaipei&showPrint=0&showCalendars=0&src=c_379c4dd57e865b4c0b6c8765311a63fa02b7656afea7f5e839989954b31736d9%40group.calendar.google.com&color=%234285F4&src=c_3d078f9944824b9bd6d896e3b7e908b1934236e54a6b0c810a8eba5125e71f47%40group.calendar.google.com&color=%2333B679&src=c_9eca46e7b5b886aed0b42c87e6ccf6d976926ade0fdb4c0a9b172eb2fa35ff14%40group.calendar.google.com&color=%23D50000"
+  },
+  "ym": {
+    "name": "陽明校區",
+    "calendar_url": "https://calendar.google.com/calendar/embed?wkst=2&ctz=Asia%2FTaipei&showPrint=0&showCalendars=0&src=c_71e74e51379483c64cd76ee55b18bc97a66715172f022c31742947bbdbb2da62%40group.calendar.google.com&color=%234285F4&src=c_d2fe5c9b2507140b7c602d2218df151e691aadd5652bcb52f4e7bcdfd9745ee7%40group.calendar.google.com&color=%2333B679&src=c_8b05d818c4366de12bc57c5a34cd7ccbc1a4a996fcc318597757afd937cd45e8%40group.calendar.google.com&color=%23D50000"
+  }
+}

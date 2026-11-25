@@ -2,7 +2,7 @@
 """
 fetch_hours.py
 --------------
-從兩個 Google Calendar iCal 端點抓取今日圖書館開館資訊，
+從 calendars.json 中的 Google Calendar 整合網址抓取今日圖書館開館資訊，
 輸出 data.json 供 index.html 讀取。
 不需要任何 API Key，直接使用公開 iCal URL。
 """
@@ -12,40 +12,34 @@ import re
 import sys
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
+from pathlib import Path
+from urllib.parse import urlsplit, parse_qs, quote
 
 import requests
 from icalendar import Calendar
 
 TZ_TAIPEI = ZoneInfo("Asia/Taipei")
 
-CALENDARS = {
-    "jd": {
-        "name": "交大校區",
-        "ical_url": (
-            "https://calendar.google.com/calendar/ical/"
-            "c_e6a5ca6c818f1aaf7cea40e50d6691183805f3b3fd349f29af96ce53d3c6b9ed"
-            "%40group.calendar.google.com/public/basic.ics"
-        ),
-        "calendar_url": (
-            "https://calendar.google.com/calendar/embed"
-            "?src=c_e6a5ca6c818f1aaf7cea40e50d6691183805f3b3fd349f29af96ce53d3c6b9ed"
-            "%40group.calendar.google.com&ctz=Asia%2FTaipei"
-        ),
-    },
-    "ym": {
-        "name": "陽明校區",
-        "ical_url": (
-            "https://calendar.google.com/calendar/ical/"
-            "c_6b25276d5eb0aef28ecfc4775650eb698a6364e565388f9e61c1d1704a7ef4e0"
-            "%40group.calendar.google.com/public/basic.ics"
-        ),
-        "calendar_url": (
-            "https://calendar.google.com/calendar/embed"
-            "?src=c_6b25276d5eb0aef28ecfc4775650eb698a6364e565388f9e61c1d1704a7ef4e0"
-            "%40group.calendar.google.com&ctz=Asia%2FTaipei"
-        ),
-    },
-}
+BASE_DIR = Path(__file__).resolve().parent
+
+
+def load_calendars() -> dict:
+    """只讀取設定；從完整 embed URL 自動取得所有 src。"""
+    config = json.loads((BASE_DIR / "calendars.json").read_text(encoding="utf-8"))
+    if set(config) != {"jd", "ym"}:
+        raise ValueError("calendars.json 必須包含 jd、ym 兩校區")
+    for key, info in config.items():
+        url = urlsplit(info["calendar_url"])
+        if url.scheme != "https" or url.netloc != "calendar.google.com" or url.path != "/calendar/embed":
+            raise ValueError(f"{key}: 請提供 Google Calendar 完整嵌入網址")
+        ids = list(dict.fromkeys(parse_qs(url.query).get("src", [])))
+        if not ids or any(not cid.strip() for cid in ids):
+            raise ValueError(f"{key}: 行事曆網址沒有有效 src")
+        info["ical_urls"] = [
+            "https://calendar.google.com/calendar/ical/" + quote(cid, safe="") + "/public/basic.ics"
+            for cid in ids
+        ]
+    return config
 
 
 def fetch_ical(url: str) -> bytes | None:
@@ -62,6 +56,8 @@ def fetch_ical(url: str) -> bytes | None:
 def to_taipei_date(dt_or_date) -> date:
     """把 datetime 或 date 統一轉成台北時區的 date。"""
     if isinstance(dt_or_date, datetime):
+        if dt_or_date.tzinfo is None:
+            dt_or_date = dt_or_date.replace(tzinfo=TZ_TAIPEI)
         return dt_or_date.astimezone(TZ_TAIPEI).date()
     return dt_or_date
 
@@ -96,11 +92,13 @@ def get_today_events(ical_bytes: bytes, target: date) -> list[dict]:
         cal = Calendar.from_ical(ical_bytes)
     except Exception as e:
         print(f"  [ERROR] parse ical: {e}", file=sys.stderr)
-        return []
+        raise ValueError("無法解析 iCal") from e
 
+    if cal.name != "VCALENDAR":
+        raise ValueError("回應不是 VCALENDAR")
     results = []
     for component in cal.walk():
-        if component.name != "VEVENT":
+        if component.name != "VEVENT" or str(component.get("STATUS", "")).upper() == "CANCELLED":
             continue
 
         dtstart = component.get("DTSTART")
@@ -119,6 +117,9 @@ def get_today_events(ical_bytes: bytes, target: date) -> list[dict]:
             # iCal 全天事件 DTEND 是 exclusive（次日），需減一天
             if not isinstance(start_val, datetime):
                 end_date -= timedelta(days=1)
+            elif isinstance(end_val, datetime):
+                # 時間事件的 DTEND 也是排除式，避免午夜結束算到隔日。
+                end_date = to_taipei_date(end_val - timedelta(microseconds=1))
         else:
             end_date = start_date
 
@@ -188,25 +189,38 @@ def main():
     }
 
     exit_code = 0
-    for key, info in CALENDARS.items():
+    for key, info in load_calendars().items():
         print(f"\n[{info['name']}]")
-        ical_bytes = fetch_ical(info["ical_url"])
+        events = []
+        failed = 0
+        for url in info["ical_urls"]:
+            try:
+                ical_bytes = fetch_ical(url)
+                if ical_bytes is None:
+                    raise ValueError("下載失敗")
+                events.extend(get_today_events(ical_bytes, today))
+            except Exception as e:
+                failed += 1
+                print(f"  [ERROR] {url}: {e}", file=sys.stderr)
 
-        if ical_bytes is None:
-            result = {"closed": False, "hours": None,
-                      "note": "資料擷取失敗，請查閱官網", "fetch_error": True}
+        # 保留原來的開館判斷規則；所有來源的原始標題也一併呈現。
+        unique = {event["raw"]: event for event in events if event["raw"]}
+        events = list(unique.values())
+        result = merge_events(events)
+        result["events"] = [event["raw"] for event in events]
+        result["fetch_error"] = failed > 0
+        if failed:
+            result["closed"] = False
+            result["hours"] = None
+            result["note"] = f"{failed} 個行事曆擷取失敗，以下事件可能不完整，請查閱行事曆。"
             exit_code = 1
-        else:
-            events = get_today_events(ical_bytes, today)
-            result = merge_events(events)
-            result["fetch_error"] = False
-            print(f"  合併結果：{result}")
+        print(f"  合併結果：{result}")
 
         result["name"]         = info["name"]
         result["calendar_url"] = info["calendar_url"]
         output["campuses"][key] = result
 
-    with open("data.json", "w", encoding="utf-8") as f:
+    with (BASE_DIR / "data.json").open("w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
     print(f"\n✓ data.json 寫出完成")
     sys.exit(exit_code)
