@@ -1,14 +1,14 @@
 {
   "date": "2026-11-28",
-  "updated_at": "2026-11-28T03:16:27+08:00",
+  "updated_at": "2026-11-28T07:58:09+08:00",
   "campuses": {
     "jd": {
       "closed": true,
       "hours": null,
-      "note": "Closed for Election Day",
+      "note": "投票日閉館",
       "events": [
-        "Closed for Election Day",
-        "投票日閉館"
+        "投票日閉館",
+        "Closed for Election Day"
       ],
       "fetch_error": false,
       "name": "交大校區",
