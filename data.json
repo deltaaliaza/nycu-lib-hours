@@ -1,24 +1,26 @@
 {
-  "date": "2026-11-27",
-  "updated_at": "2026-11-27T21:40:01+08:00",
+  "date": "2026-11-28",
+  "updated_at": "2026-11-28T03:16:27+08:00",
   "campuses": {
     "jd": {
-      "closed": false,
-      "hours": "08:00–22:30",
-      "note": null,
+      "closed": true,
+      "hours": null,
+      "note": "Closed for Election Day",
       "events": [
-        "08:00-22:30"
+        "Closed for Election Day",
+        "投票日閉館"
       ],
       "fetch_error": false,
       "name": "交大校區",
       "calendar_url": "https://calendar.google.com/calendar/embed?wkst=2&ctz=Asia%2FTaipei&showPrint=0&showCalendars=0&src=c_379c4dd57e865b4c0b6c8765311a63fa02b7656afea7f5e839989954b31736d9%40group.calendar.google.com&color=%234285F4&src=c_3d078f9944824b9bd6d896e3b7e908b1934236e54a6b0c810a8eba5125e71f47%40group.calendar.google.com&color=%2333B679&src=c_9eca46e7b5b886aed0b42c87e6ccf6d976926ade0fdb4c0a9b172eb2fa35ff14%40group.calendar.google.com&color=%23D50000"
     },
     "ym": {
-      "closed": false,
-      "hours": "08:00–22:30",
-      "note": null,
+      "closed": true,
+      "hours": null,
+      "note": "投票日閉館",
       "events": [
-        "08:00-22:30"
+        "投票日閉館",
+        "Closed for Election Day"
       ],
       "fetch_error": false,
       "name": "陽明校區",
