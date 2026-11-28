@@ -1,14 +1,14 @@
 {
   "date": "2026-11-28",
-  "updated_at": "2026-11-28T11:47:55+08:00",
+  "updated_at": "2026-11-28T20:50:40+08:00",
   "campuses": {
     "jd": {
       "closed": true,
       "hours": null,
-      "note": "Closed for Election Day",
+      "note": "投票日閉館",
       "events": [
-        "Closed for Election Day",
-        "投票日閉館"
+        "投票日閉館",
+        "Closed for Election Day"
       ],
       "fetch_error": false,
       "name": "交大校區",
@@ -17,10 +17,10 @@
     "ym": {
       "closed": true,
       "hours": null,
-      "note": "Closed for Election Day",
+      "note": "投票日閉館",
       "events": [
-        "Closed for Election Day",
-        "投票日閉館"
+        "投票日閉館",
+        "Closed for Election Day"
       ],
       "fetch_error": false,
       "name": "陽明校區",
